@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "consolidatedcustomer.csv",
+				"fileName": "consolidatedorder.csv",
 				"folderPath": "Consolidated",
 				"container": "assessmentcontainer"
 			},
