@@ -5,12 +5,15 @@
 			"referenceName": "LS_AssessmentDB",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "AssessmentDatasets"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "reporting",
-			"table": "ordercustomerdata"
+			"schema": "final",
+			"table": "reportingdata"
 		}
 	}
 }
