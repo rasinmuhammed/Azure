@@ -1,20 +1,21 @@
 {
-	"name": "customer",
+	"name": "ConsolidatedCustomerDetails",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_AzureBlobStorage",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "PractiseDatasets"
+			"name": "AssessmentDatasets"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "Input",
-				"container": "container1"
+				"fileName": "consolidatedcustomer.csv",
+				"folderPath": "Consolidated",
+				"container": "assessmentcontainer"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
@@ -63,6 +64,5 @@
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }
