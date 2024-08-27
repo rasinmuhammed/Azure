@@ -1,0 +1,16 @@
+{
+	"name": "ReportingData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AssessmentDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "reporting",
+			"table": "ordercustomerdata"
+		}
+	}
+}

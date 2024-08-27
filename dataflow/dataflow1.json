@@ -6,52 +6,60 @@
 			"sources": [
 				{
 					"dataset": {
+						"referenceName": "DB_CustomerDetails",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerDetails"
+				},
+				{
+					"dataset": {
 						"referenceName": "OrderDetailSQL",
 						"type": "DatasetReference"
 					},
 					"name": "OrderDetails"
-				},
-				{
-					"dataset": {
-						"referenceName": "CustomersSQL",
-						"type": "DatasetReference"
-					},
-					"name": "source1"
-				},
-				{
-					"dataset": {
-						"referenceName": "OrderDetailSQL",
-						"type": "DatasetReference"
-					},
-					"name": "source2"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "CleanedCustomerData",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "CleanedCustomerData"
+				},
+				{
+					"dataset": {
+						"referenceName": "TransformedData",
+						"type": "DatasetReference"
+					},
+					"name": "ReportingData"
+				},
+				{
+					"dataset": {
+						"referenceName": "ReportingData",
+						"type": "DatasetReference"
+					},
+					"name": "MergedData"
 				}
 			],
 			"transformations": [
 				{
-					"name": "DerivingPrice",
-					"description": "Creates an explicit mapping for each drifted column"
+					"name": "CleaningCutomerDetails"
 				},
 				{
-					"name": "SelectingProductDetails"
+					"name": "PreparingData"
 				},
 				{
 					"name": "join1"
+				},
+				{
+					"name": "PreparingData2"
+				},
+				{
+					"name": "FilteringData"
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> OrderDetails",
 				"source(output(",
 				"          CustomerID as string,",
 				"          FirstName as string,",
@@ -67,7 +75,7 @@
 				"     allowSchemaDrift: false,",
 				"     validateSchema: true,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
+				"     format: 'table') ~> CustomerDetails",
 				"source(output(",
 				"          OrderID as string,",
 				"          ProductID as string,",
@@ -80,23 +88,61 @@
 				"     allowSchemaDrift: false,",
 				"     validateSchema: true,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source2",
-				"OrderDetails derive(ProductID = toString(byName('ProductID')),",
-				"          ProductName = toString(byName('ProductName')),",
-				"          Price = divide(toInteger(byName('Price')),toInteger(byName('Quantity')))) ~> DerivingPrice",
-				"DerivingPrice select(mapColumn(",
-				"          ProductID,",
-				"          ProductName,",
-				"          Price",
+				"     format: 'table') ~> OrderDetails",
+				"CustomerDetails derive(each(match(1==1), $$ = iifNull($$,toString(\"NULL\"))),",
+				"          PhoneNumber1 = toInteger(replace(PhoneNumber,\"-\",\"\")),",
+				"          ZipCode1 = toInteger(ZipCode),",
+				"          FullName = FirstName+\" \"+LastName) ~> CleaningCutomerDetails",
+				"CleaningCutomerDetails select(mapColumn(",
+				"          CustomerID,",
+				"          FullName,",
+				"          Email,",
+				"          Address,",
+				"          City,",
+				"          State,",
+				"          Country,",
+				"          PhoneNumber = PhoneNumber1,",
+				"          ZipCode = ZipCode1",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectingProductDetails",
-				"source1, source2 join(source1@CustomerID == source2@CustomerID,",
-				"     joinType:'inner',",
+				"     skipDuplicateMapOutputs: true) ~> PreparingData",
+				"OrderDetails, PreparingData join(OrderDetails@CustomerID == PreparingData@CustomerID,",
+				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
-				"SelectingProductDetails sink(allowSchemaDrift: true,",
+				"join1 select(mapColumn(",
+				"          OrderID,",
+				"          ProductID,",
+				"          ProductName,",
+				"          Quantity,",
+				"          OrderTimestamp,",
+				"          Price,",
+				"          CustomerID = OrderDetails@CustomerID,",
+				"          FullName,",
+				"          Email,",
+				"          Address,",
+				"          City,",
+				"          State,",
+				"          Country,",
+				"          PhoneNumber,",
+				"          ZipCode",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> PreparingData2",
+				"PreparingData2 select(mapColumn(",
+				"          OrderID,",
+				"          ProductID,",
+				"          ProductName,",
+				"          Quantity,",
+				"          OrderTimestamp,",
+				"          Price,",
+				"          CustomerID,",
+				"          FullName",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FilteringData",
+				"PreparingData sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -105,7 +151,27 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError') ~> CleanedCustomerData",
+				"PreparingData2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> ReportingData",
+				"FilteringData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> MergedData"
 			]
 		}
 	}

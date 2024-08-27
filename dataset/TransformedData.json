@@ -1,0 +1,16 @@
+{
+	"name": "TransformedData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AssessmentDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "prep",
+			"table": "ordercustomerdetails"
+		}
+	}
+}
