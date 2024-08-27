@@ -1,0 +1,9 @@
+{
+	"name": "training-rasin-demo",
+	"location": "southindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "76592c7b-66a1-48ca-99a3-abd4d976fa40",
+		"tenantId": "2800c0a0-70e9-49be-8733-faeaa6aced99"
+	}
+}
