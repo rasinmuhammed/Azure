@@ -1,0 +1,16 @@
+{
+	"name": "Quiz",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "raw",
+			"table": "quiz"
+		}
+	}
+}

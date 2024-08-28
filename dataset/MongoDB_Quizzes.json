@@ -1,0 +1,15 @@
+{
+	"name": "MongoDB_Quizzes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_MongoDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MongoDbAtlasCollection",
+		"schema": [],
+		"typeProperties": {
+			"collection": "quizzes"
+		}
+	}
+}
