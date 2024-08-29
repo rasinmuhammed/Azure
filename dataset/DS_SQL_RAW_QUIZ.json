@@ -11,8 +11,7 @@
 				"defaultValue": "RAW"
 			},
 			"TABLE_NAME": {
-				"type": "String",
-				"defaultValue": "ATTEMPTS"
+				"type": "String"
 			}
 		},
 		"annotations": [],

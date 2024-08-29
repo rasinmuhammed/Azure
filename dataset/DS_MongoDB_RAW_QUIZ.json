@@ -1,5 +1,5 @@
 {
-	"name": "MongoDbAtlasCollection",
+	"name": "DS_MongoDB_RAW_QUIZ",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_MongoDB",

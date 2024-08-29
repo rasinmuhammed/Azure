@@ -5,21 +5,61 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "flatten1"
+					"name": "formattedDate"
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1",
-				"source1 foldDown(unroll(),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten1"
+				"source(output(",
+				"          id as string,",
+				"          title as string,",
+				"          question as string,",
+				"          OPTION1 as string,",
+				"          {option 2} as string,",
+				"          {option 3} as string,",
+				"          {option 4} as string,",
+				"          answer as string,",
+				"          {questions'][0]['_id_$oid} as string,",
+				"          timer as string,",
+				"          hasTimer as boolean,",
+				"          quizId as string,",
+				"          password as string,",
+				"          createdBy as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          id as string,",
+				"          user as string,",
+				"          quizId as string,",
+				"          questionId as string,",
+				"          answer as string,",
+				"          answersId as string,",
+				"          date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source2 derive(date = toDate(toTimestamp(toInteger(toLong(date) / toLong( 1000 ))* 1000l))) ~> formattedDate"
 			]
 		}
 	}

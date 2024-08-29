@@ -95,7 +95,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MongoDbAtlasCollection",
+						"referenceName": "DS_MongoDB_RAW_QUIZ",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "attempts"
@@ -261,7 +261,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MongoDbAtlasCollection",
+						"referenceName": "DS_MongoDB_RAW_QUIZ",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "quizzes"
@@ -359,7 +359,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MongoDbAtlasCollection",
+						"referenceName": "DS_MongoDB_RAW_QUIZ",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "users"
@@ -478,7 +478,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MongoDbAtlasCollection",
+						"referenceName": "DS_MongoDB_RAW_QUIZ",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "results"
