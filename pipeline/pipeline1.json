@@ -1,0 +1,502 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Attempt",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MongoDbAtlasSource",
+						"batchSize": 100
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "DROP TABLE IF EXISTS RAW.ATTEMPTS",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['_id']['$oid']"
+								},
+								"sink": {
+									"name": "id"
+								}
+							},
+							{
+								"source": {
+									"path": "$['user']['$oid']"
+								},
+								"sink": {
+									"name": "user"
+								}
+							},
+							{
+								"source": {
+									"path": "$['quiz']['$oid']"
+								},
+								"sink": {
+									"name": "quizId"
+								}
+							},
+							{
+								"source": {
+									"path": "$['answers'][0]['questionId']['$oid']"
+								},
+								"sink": {
+									"name": "questionId"
+								}
+							},
+							{
+								"source": {
+									"path": "$['answers'][0]['answer']"
+								},
+								"sink": {
+									"name": "answer"
+								}
+							},
+							{
+								"source": {
+									"path": "$['answers'][0]['_id']['$oid']"
+								},
+								"sink": {
+									"name": "answersId"
+								}
+							},
+							{
+								"source": {
+									"path": "$['attemptDate']['$date']['$numberLong']"
+								},
+								"sink": {
+									"name": "date",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MongoDbAtlasCollection",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": "attempts"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference",
+						"parameters": {
+							"SCHEMA_NAME": "RAW",
+							"TABLE_NAME": "ATTEMPTS"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy Quizzes",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MongoDbAtlasSource",
+						"batchSize": 100
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "DROP TABLE IF EXISTS RAW.QUIZ",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['_id']['$oid']"
+								},
+								"sink": {
+									"name": "id"
+								}
+							},
+							{
+								"source": {
+									"path": "$['title']"
+								},
+								"sink": {
+									"name": "title"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['question']"
+								},
+								"sink": {
+									"name": "question"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['options'][0]"
+								},
+								"sink": {
+									"name": "OPTION1"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['options'][2]"
+								},
+								"sink": {
+									"name": "option 2"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['options'][3]"
+								},
+								"sink": {
+									"name": "option 3"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['options'][1]"
+								},
+								"sink": {
+									"name": "option 4"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['answer']"
+								},
+								"sink": {
+									"name": "answer"
+								}
+							},
+							{
+								"source": {
+									"path": "$['questions'][0]['_id']['$oid']"
+								},
+								"sink": {
+									"name": "questions'][0]['_id_$oid"
+								}
+							},
+							{
+								"source": {
+									"path": "$['timer']['$numberInt']"
+								},
+								"sink": {
+									"name": "timer"
+								}
+							},
+							{
+								"source": {
+									"path": "$['hasTimer']"
+								},
+								"sink": {
+									"name": "hasTimer"
+								}
+							},
+							{
+								"source": {
+									"path": "$['quizId']"
+								},
+								"sink": {
+									"name": "quizId"
+								}
+							},
+							{
+								"source": {
+									"path": "$['password']"
+								},
+								"sink": {
+									"name": "password"
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdBy']"
+								},
+								"sink": {
+									"name": "createdBy"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MongoDbAtlasCollection",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": "quizzes"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference",
+						"parameters": {
+							"SCHEMA_NAME": "RAW",
+							"TABLE_NAME": "QUIZ"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy Users",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MongoDbAtlasSource",
+						"batchSize": 100
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "DROP TABLE IF EXISTS RAW.USERS",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['_id']['$oid']"
+								},
+								"sink": {
+									"name": "ID"
+								}
+							},
+							{
+								"source": {
+									"path": "$['username']"
+								},
+								"sink": {
+									"name": "username",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['email']"
+								},
+								"sink": {
+									"name": "email",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['password']"
+								},
+								"sink": {
+									"name": "password",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['role']"
+								},
+								"sink": {
+									"name": "role",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MongoDbAtlasCollection",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": "users"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference",
+						"parameters": {
+							"SCHEMA_NAME": "RAW",
+							"TABLE_NAME": "USERS"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy Results",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MongoDbAtlasSource",
+						"batchSize": 100
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "DROP TABLE IF EXISTS RAW.RESULTS",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['_id']['$oid']"
+								},
+								"sink": {
+									"name": "id"
+								}
+							},
+							{
+								"source": {
+									"path": "$['user']['$oid']"
+								},
+								"sink": {
+									"name": "userid"
+								}
+							},
+							{
+								"source": {
+									"path": "$['quiz']['$oid']"
+								},
+								"sink": {
+									"name": "quizid"
+								}
+							},
+							{
+								"source": {
+									"path": "$['answers'][0]['questionId']['$oid']"
+								},
+								"sink": {
+									"name": "questionid"
+								}
+							},
+							{
+								"source": {
+									"path": "$['answers'][0]['answer']"
+								},
+								"sink": {
+									"name": "answer"
+								}
+							},
+							{
+								"source": {
+									"path": "$['answers'][0]['_id']['$oid']"
+								},
+								"sink": {
+									"name": "answerid"
+								}
+							},
+							{
+								"source": {
+									"path": "$['score']['$numberInt']"
+								},
+								"sink": {
+									"name": "score"
+								}
+							},
+							{
+								"source": {
+									"path": "$['submissionDate']['$date']['$numberLong']"
+								},
+								"sink": {
+									"name": "submissionDate",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MongoDbAtlasCollection",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": "results"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference",
+						"parameters": {
+							"SCHEMA_NAME": "RAW",
+							"TABLE_NAME": "RESULTS"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

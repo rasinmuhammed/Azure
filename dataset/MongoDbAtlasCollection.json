@@ -1,0 +1,20 @@
+{
+	"name": "MongoDbAtlasCollection",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_MongoDB",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "MongoDbAtlasCollection",
+		"schema": [],
+		"typeProperties": {
+			"collection": "@dataset().tablename"
+		}
+	}
+}
