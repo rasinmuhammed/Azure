@@ -9,20 +9,37 @@
 						"referenceName": "DS_SQL_RAW_QUIZ",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "Quiz"
 				},
 				{
 					"dataset": {
 						"referenceName": "DS_SQL_RAW_QUIZ",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "Attempts"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference"
+					},
+					"name": "Users"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_RAW_QUIZ",
+						"type": "DatasetReference"
+					},
+					"name": "Results"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
 					"name": "formattedDate"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -45,7 +62,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
+				"     format: 'table') ~> Quiz",
 				"source(output(",
 				"          id as string,",
 				"          user as string,",
@@ -58,8 +75,41 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source2",
-				"source2 derive(date = toDate(toTimestamp(toInteger(toLong(date) / toLong( 1000 ))* 1000l))) ~> formattedDate"
+				"     format: 'table') ~> Attempts",
+				"source(output(",
+				"          ID as string,",
+				"          username as string,",
+				"          email as string,",
+				"          password as string,",
+				"          role as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Users",
+				"source(output(",
+				"          id as string,",
+				"          userid as string,",
+				"          quizid as string,",
+				"          questionid as string,",
+				"          answer as string,",
+				"          answerid as string,",
+				"          score as string,",
+				"          submissionDate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Results",
+				"Attempts derive(date = toDate(toTimestamp(toInteger(toLong(date) / toLong( 1000 ))* 1000l))) ~> formattedDate",
+				"Users select(mapColumn(",
+				"          ID,",
+				"          Name = username,",
+				"          email,",
+				"          role",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
 			]
 		}
 	}
