@@ -1,0 +1,113 @@
+{
+	"name": "DF_prep_to_reporting_assessment",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedQuiz"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedAttempts"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedResults"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedUsers"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as string,",
+				"          title as string,",
+				"          question as string,",
+				"          {option 1} as string,",
+				"          {option 2} as string,",
+				"          {option 3} as string,",
+				"          {option 4} as string,",
+				"          answer as string,",
+				"          questionID as string,",
+				"          timer as string,",
+				"          hasTimer as boolean,",
+				"          quizId as string,",
+				"          password as string,",
+				"          createdBy as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CleanedQuiz",
+				"source(output(",
+				"          id as string,",
+				"          user as string,",
+				"          quizId as string,",
+				"          questionId as string,",
+				"          answer as string,",
+				"          answersId as string,",
+				"          date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CleanedAttempts",
+				"source(output(",
+				"          id as string,",
+				"          userid as string,",
+				"          quizid as string,",
+				"          questionid as string,",
+				"          answer as string,",
+				"          answerid as string,",
+				"          score as string,",
+				"          submissionDate as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CleanedResults",
+				"source(output(",
+				"          ID as string,",
+				"          Name as string,",
+				"          email as string,",
+				"          role as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CleanedUsers",
+				"CleanedQuiz, CleanedUsers join(createdBy == Name,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 aggregate(groupBy(Name),",
+				"     {Number of Quiz} = count(byName('id'))) ~> aggregate1"
+			]
+		}
+	}
+}
