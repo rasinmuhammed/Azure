@@ -1,0 +1,77 @@
+{
+	"name": "DS_XLSX_misumi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DS_Assessment_2"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "sheet1",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "product_details.xlsx",
+				"container": "miniproject"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Brand Name",
+				"type": "String"
+			},
+			{
+				"name": "Category Name",
+				"type": "String"
+			},
+			{
+				"name": "Max Price Per Piece",
+				"type": "String"
+			},
+			{
+				"name": "Max Standard Days to Ship",
+				"type": "String"
+			},
+			{
+				"name": "Max Standard Unit Price",
+				"type": "String"
+			},
+			{
+				"name": "Min Price Per Piece",
+				"type": "String"
+			},
+			{
+				"name": "Min Standard Days to Ship",
+				"type": "String"
+			},
+			{
+				"name": "Min Standard Unit Price",
+				"type": "String"
+			},
+			{
+				"name": "Page Views",
+				"type": "String"
+			},
+			{
+				"name": "Price Check Less Flag",
+				"type": "String"
+			},
+			{
+				"name": "Product Image URL",
+				"type": "String"
+			},
+			{
+				"name": "Product Name",
+				"type": "String"
+			},
+			{
+				"name": "Recommend Flag",
+				"type": "String"
+			}
+		]
+	}
+}

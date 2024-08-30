@@ -27,7 +27,14 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          {Parent Category} as string,",
@@ -65,7 +72,27 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> Products"
+				"     format: 'table') ~> Products",
+				"Products select(mapColumn(",
+				"          {Brand Name},",
+				"          {Category Name},",
+				"          {Max Price Per Piece},",
+				"          {Max Standard Days to Ship},",
+				"          {Max Standard Unit Price},",
+				"          {Min Price Per Piece},",
+				"          {Min Standard Days to Ship},",
+				"          {Min Standard Unit Price},",
+				"          {Page Views},",
+				"          {Product Image URL},",
+				"          {Product Name}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive({Max Price Per Piece} = toFloat({Max Price Per Piece}),",
+				"          {Max Standard Days to Ship} = toInteger({Max Standard Days to Ship}),",
+				"          {Max Standard Unit Price} = toFloat({Max Standard Unit Price}),",
+				"          {Min Price Per Piece} = toFloat({Min Price Per Piece}),",
+				"          {Min Standard Days to Ship} = toInteger(Min)) ~> derivedColumn1"
 			]
 		}
 	}

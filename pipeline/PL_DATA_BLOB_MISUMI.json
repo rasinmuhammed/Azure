@@ -153,14 +153,11 @@
 				],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
+						"type": "ExcelSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
 							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
 						}
 					},
 					"sink": {
@@ -341,11 +338,8 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_BLOB_misumi",
-						"type": "DatasetReference",
-						"parameters": {
-							"filename": "product_details.csv"
-						}
+						"referenceName": "DS_XLSX_misumi",
+						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
