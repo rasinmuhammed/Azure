@@ -580,7 +580,7 @@
 				}
 			},
 			{
-				"name": "Summarising",
+				"name": "Reporting",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{

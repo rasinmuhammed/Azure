@@ -1,0 +1,72 @@
+{
+	"name": "DF_raw_to_prep_misumi",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_misumi",
+						"type": "DatasetReference"
+					},
+					"name": "Category"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_misumi",
+						"type": "DatasetReference"
+					},
+					"name": "Navigation"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_misumi",
+						"type": "DatasetReference"
+					},
+					"name": "Products"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          {Parent Category} as string,",
+				"          Subcategory as string,",
+				"          Link as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Category",
+				"source(output(",
+				"          {Parent Category} as string,",
+				"          Subcategory as string,",
+				"          Link as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Navigation",
+				"source(output(",
+				"          {Brand Name} as string,",
+				"          {Category Name} as string,",
+				"          {Max Price Per Piece} as string,",
+				"          {Max Standard Days to Ship} as string,",
+				"          {Max Standard Unit Price} as string,",
+				"          {Min Price Per Piece} as string,",
+				"          {Min Standard Days to Ship} as string,",
+				"          {Min Standard Unit Price} as string,",
+				"          {Page Views} as string,",
+				"          {Price Check Less Flag} as string,",
+				"          {Product Image URL} as string,",
+				"          {Product Name} as string,",
+				"          {Recommend Flag} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Products"
+			]
+		}
+	}
+}

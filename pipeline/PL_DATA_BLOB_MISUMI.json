@@ -94,7 +94,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "drop if exists raw.navigation",
+						"preCopyScript": "drop table if exists raw.navigation",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"tableOption": "autoCreate",
@@ -141,7 +141,16 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "miniproject//@{'product_details.csv'}"
+					},
+					{
+						"name": "Destination",
+						"value": "@{'raw'}.@{'products'}"
+					}
+				],
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
