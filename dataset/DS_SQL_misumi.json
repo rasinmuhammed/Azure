@@ -1,23 +1,30 @@
 {
-	"name": "DS_MongoDB_assessment",
+	"name": "DS_SQL_misumi",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_MongoDB",
+			"referenceName": "LS_SQLDatabase",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
+			"schemaname": {
+				"type": "string"
+			},
 			"tablename": {
 				"type": "string"
 			}
 		},
 		"folder": {
-			"name": "DS_Assessment"
+			"name": "DS_Assessment_2"
 		},
 		"annotations": [],
-		"type": "MongoDbAtlasCollection",
+		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"collection": {
+			"schema": {
+				"value": "@dataset().schemaname",
+				"type": "Expression"
+			},
+			"table": {
 				"value": "@dataset().tablename",
 				"type": "Expression"
 			}

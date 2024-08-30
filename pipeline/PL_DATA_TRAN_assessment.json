@@ -1,10 +1,12 @@
 {
-	"name": "pipeline1",
+	"name": "PL_DATA_TRAN_assessment",
 	"properties": {
 		"activities": [
 			{
 				"name": "Copy Attempt",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -21,7 +23,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "DROP TABLE IF EXISTS RAW.ATTEMPTS",
+						"preCopyScript": "DROP TABLE IF EXISTS [raw].[attempts];",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"tableOption": "autoCreate",
@@ -93,7 +95,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_MongoDB_RAW_QUIZ",
+						"referenceName": "DS_MongoDB_assessment",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "attempts"
@@ -102,11 +104,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference",
 						"parameters": {
-							"SCHEMA_NAME": "RAW",
-							"TABLE_NAME": "ATTEMPTS"
+							"schemaname": "raw",
+							"tablename": "attempts"
 						}
 					}
 				]
@@ -114,6 +116,8 @@
 			{
 				"name": "Copy Quizzes",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -130,7 +134,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "DROP TABLE IF EXISTS RAW.QUIZ",
+						"preCopyScript": "DROP TABLE IF EXISTS [raw].[quiz];",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"tableOption": "autoCreate",
@@ -257,7 +261,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_MongoDB_RAW_QUIZ",
+						"referenceName": "DS_MongoDB_assessment",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "quizzes"
@@ -266,11 +270,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference",
 						"parameters": {
-							"SCHEMA_NAME": "RAW",
-							"TABLE_NAME": "QUIZ"
+							"schemaname": "raw",
+							"tablename": "quiz"
 						}
 					}
 				]
@@ -278,6 +282,8 @@
 			{
 				"name": "Copy Users",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -294,7 +300,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "DROP TABLE IF EXISTS RAW.USERS",
+						"preCopyScript": "DROP TABLE IF EXISTS [raw].[users];",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"tableOption": "autoCreate",
@@ -353,7 +359,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_MongoDB_RAW_QUIZ",
+						"referenceName": "DS_MongoDB_assessment",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "users"
@@ -362,11 +368,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference",
 						"parameters": {
-							"SCHEMA_NAME": "RAW",
-							"TABLE_NAME": "USERS"
+							"schemaname": "raw",
+							"tablename": "users"
 						}
 					}
 				]
@@ -374,6 +380,8 @@
 			{
 				"name": "Copy Results",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -390,7 +398,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "DROP TABLE IF EXISTS RAW.RESULTS",
+						"preCopyScript": "DROP TABLE IF EXISTS [raw].[results];",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"tableOption": "autoCreate",
@@ -470,7 +478,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_MongoDB_RAW_QUIZ",
+						"referenceName": "DS_MongoDB_assessment",
 						"type": "DatasetReference",
 						"parameters": {
 							"tablename": "results"
@@ -479,14 +487,158 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference",
 						"parameters": {
-							"SCHEMA_NAME": "RAW",
-							"TABLE_NAME": "RESULTS"
+							"schemaname": "raw",
+							"tablename": "results"
 						}
 					}
 				]
+			},
+			{
+				"name": "Cleaning",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Copy Results",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Copy Users",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Copy Quizzes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Copy Attempt",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_raw_to_prep_assessment",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"Quiz": {
+								"schemaname": "raw",
+								"tablename": "quiz"
+							},
+							"Attempts": {
+								"schemaname": "raw",
+								"tablename": "attempts"
+							},
+							"Users": {
+								"schemaname": "raw",
+								"tablename": "users"
+							},
+							"Results": {
+								"schemaname": "raw",
+								"tablename": "results"
+							},
+							"CleanedQuiz": {
+								"schemaname": "prep",
+								"tablename": "quiz"
+							},
+							"CleanedAttempts": {
+								"schemaname": "prep",
+								"tablename": "attempts"
+							},
+							"CleanedUsers": {
+								"schemaname": "prep",
+								"tablename": "users"
+							},
+							"CleanedResults": {
+								"schemaname": "prep",
+								"tablename": "results"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Summarising",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Cleaning",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_prep_to_reporting_assessment",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"CleanedQuiz": {
+								"schemaname": "prep",
+								"tablename": "quiz"
+							},
+							"CleanedAttempts": {
+								"schemaname": "prep",
+								"tablename": "attempts"
+							},
+							"CleanedResults": {
+								"schemaname": "prep",
+								"tablename": "results"
+							},
+							"CleanedUsers": {
+								"schemaname": "prep",
+								"tablename": "users"
+							},
+							"NoOfQuiz": {
+								"schemaname": "reporting",
+								"tablename": "quizcount"
+							},
+							"UserAttendedQuiz": {
+								"schemaname": "reporting",
+								"tablename": "attendedquiz"
+							},
+							"AverageScore": {
+								"schemaname": "reporting",
+								"tablename": "averagescore"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"annotations": []

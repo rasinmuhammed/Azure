@@ -1,0 +1,356 @@
+{
+	"name": "PL_DATA_BLOB_MISUMI",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyCategoryData",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "drop table if exists raw.category",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_BLOB_misumi",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": "category_links.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_misumi",
+						"type": "DatasetReference",
+						"parameters": {
+							"schemaname": "raw",
+							"tablename": "category"
+						}
+					}
+				]
+			},
+			{
+				"name": "CopyNavigationData",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "drop if exists raw.navigation",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_BLOB_misumi",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": "navigation_links.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_misumi",
+						"type": "DatasetReference",
+						"parameters": {
+							"schemaname": "raw",
+							"tablename": "navigation"
+						}
+					}
+				]
+			},
+			{
+				"name": "CopyProductData",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "DROP TABLE IF EXISTS raw.products",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Brand Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Brand Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Category Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Category Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Max Price Per Piece",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Max Price Per Piece",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Max Standard Days to Ship",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Max Standard Days to Ship",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Max Standard Unit Price",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Max Standard Unit Price",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Min Price Per Piece",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Min Price Per Piece",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Min Standard Days to Ship",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Min Standard Days to Ship",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Min Standard Unit Price",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Min Standard Unit Price",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Page Views",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Page Views",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Price Check Less Flag",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Price Check Less Flag",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Product Image URL",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Product Image URL",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Product Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Product Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Recommend Flag",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Recommend Flag",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_BLOB_misumi",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": "product_details.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_misumi",
+						"type": "DatasetReference",
+						"parameters": {
+							"schemaname": "raw",
+							"tablename": "products"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

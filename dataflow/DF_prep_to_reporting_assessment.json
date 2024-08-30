@@ -33,13 +33,47 @@
 					"name": "CleanedUsers"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "NoOfQuiz"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "UserAttendedQuiz"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "AverageScore"
+				}
+			],
 			"transformations": [
 				{
 					"name": "join1"
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "aggregate2"
+				},
+				{
+					"name": "join3"
+				},
+				{
+					"name": "aggregate3"
 				}
 			],
 			"scriptLines": [
@@ -106,7 +140,54 @@
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
 				"join1 aggregate(groupBy(Name),",
-				"     {Number of Quiz} = count(byName('id'))) ~> aggregate1"
+				"     {Number of Quizzes Created} = count(byName('id'))) ~> aggregate1",
+				"CleanedAttempts, CleanedUsers join(user == CleanedUsers@ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 aggregate(groupBy(Name),",
+				"     {Number of Quizzes Attempted} = count(byName('id'))) ~> aggregate2",
+				"CleanedResults, CleanedUsers join(userid == CleanedUsers@ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join3 aggregate(groupBy(Name),",
+				"     score = avg(toInteger(score))) ~> aggregate3",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> NoOfQuiz",
+				"aggregate2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> UserAttendedQuiz",
+				"aggregate3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> AverageScore"
 			]
 		}
 	}

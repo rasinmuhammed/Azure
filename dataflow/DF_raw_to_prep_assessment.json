@@ -1,45 +1,80 @@
 {
-	"name": "dataflow1",
+	"name": "DF_raw_to_prep_assessment",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference"
 					},
 					"name": "Quiz"
 				},
 				{
 					"dataset": {
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference"
 					},
 					"name": "Attempts"
 				},
 				{
 					"dataset": {
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference"
 					},
 					"name": "Users"
 				},
 				{
 					"dataset": {
-						"referenceName": "DS_SQL_RAW_QUIZ",
+						"referenceName": "DS_SQL_assessment",
 						"type": "DatasetReference"
 					},
 					"name": "Results"
 				}
 			],
-			"sinks": [],
-			"transformations": [
+			"sinks": [
 				{
-					"name": "formattedDate"
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedQuiz"
 				},
 				{
-					"name": "select1"
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedAttempts"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedUsers"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_assessment",
+						"type": "DatasetReference"
+					},
+					"name": "CleanedResults"
+				}
+			],
+			"transformations": [
+				{
+					"name": "formattedDate1"
+				},
+				{
+					"name": "DroppingPassword"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "Renaming"
 				}
 			],
 			"scriptLines": [
@@ -101,7 +136,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> Results",
-				"Attempts derive(date = toDate(toTimestamp(toInteger(toLong(date) / toLong( 1000 ))* 1000l))) ~> formattedDate",
+				"Attempts derive(date = toDate(toTimestamp(toInteger(toLong(date) / toLong( 1000 ))* 1000l))) ~> formattedDate1",
 				"Users select(mapColumn(",
 				"          ID,",
 				"          Name = username,",
@@ -109,7 +144,72 @@
 				"          role",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1"
+				"     skipDuplicateMapOutputs: true) ~> DroppingPassword",
+				"Results derive(submissionDate = toDate(toTimestamp(toInteger(toLong(submissionDate) / toLong( 1000 ))* 1000l)),",
+				"          score = toInteger(score)) ~> derivedColumn1",
+				"Quiz select(mapColumn(",
+				"          id,",
+				"          title,",
+				"          question,",
+				"          {option 1} = OPTION1,",
+				"          {option 2},",
+				"          {option 3},",
+				"          {option 4},",
+				"          answer,",
+				"          questionID = {questions'][0]['_id_$oid},",
+				"          timer,",
+				"          hasTimer,",
+				"          quizId,",
+				"          password,",
+				"          createdBy",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Renaming",
+				"Renaming sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CleanedQuiz",
+				"formattedDate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CleanedAttempts",
+				"DroppingPassword sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CleanedUsers",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CleanedResults"
 			]
 		}
 	}
